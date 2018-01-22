@@ -32,16 +32,74 @@ class App extends Component {
 
         const simpleStorage = contract(SimpleStorageContract)
         simpleStorage.setProvider(this.web3.currentProvider)
-        this.simpleStorageInstance = simpleStorage.at('0x8e08dd08cb249be7a6e9972912a74338f3b9a29f')
+        // simpleStorage.once('ValueStored', function(error, event) {
+        //   console.log(event)
+        // })
+
+        // console.log(simpleStorage)
+        simpleStorage.deployed().then(instance => {
+          console.log(instance)
+          this.simpleStorageInstance = instance
+          this.web3.eth.getAccounts((error, accounts) => {
+            this.account = accounts[0]
+          })
+          results.web3.eth.getBlockNumber((error, blockNumber) => {
+            console.log(blockNumber)
+            // instance.ValueStored({}, { fromBlock: blockNumber, toBlock: 'latest' }).watch((error, results) => {
+            //   console.log(results)
+            // })
+            // console.log(instance.ValueStored)
+            instance.ValueStored({}, { fromBlock: blockNumber, toBlock: 'latest' }, (error, results) => {
+              console.log(results.args.x.c[0])
+            })
+          })
+
+          // this.simpleStorageInstance.ValueStored().watch((err, event) => {
+          //   console.log(event)
+          // })
+          // this.simpleStorageInstance.ValueChanged().watch((err, event) => {
+          //   console.log(event)
+          // })
+        })
+        // this.simpleStorageInstance = simpleStorage.at('0xbd8871a056ee89cdde3846afb63ffde608586317')
+        // console.log(this.simpleStorageInstance)
+        // simpleStorage.events.ValueStored(function(error, event) {
+        //   console.log(event)
+        // })
 
         // Get accounts.
-        this.web3.eth.getAccounts((error, accounts) => {
-          this.account = accounts[0]
-        })
+        // this.web3.eth.getAccounts((error, accounts) => {
+        //   this.account = accounts[0]
+        // })
+        // this.simpleStorageInstance.ValueStored().watch((err, event) => {
+        //   console.log(event)
+        // })
+        // this.simpleStorageInstance.ValueChanged().watch((err, event) => {
+        //   console.log(event)
+        // })
 
-        const event = this.simpleStorageInstance.ValueStored((error, result) => {
-          console.log(result)
-        })
+        // const event = this.simpleStorageInstance.ValueStored((error, result) => {
+        //   console.log(result)
+        // })
+
+        // this.simpleStorageInstance.once('ValueStored', function(error, event) {
+        //   console.log(event)
+        // })
+
+        // simpleStorage.once('ValueStored', function(error, event) {
+        //   console.log(event)
+        // })
+
+        // var myEvent = this.simpleStorageInstance.ValueStored({}, { fromBlock: 5500334, toBlock: 'latest' })
+        // myEvent.watch(function(error, result) {
+        //   console.log('ValueStored')
+        //   // console.log(arguments)
+        // })
+
+        // var event = this.simpleStorageInstance.ValueStored({}, { fromBlock: 0 }, function(error, result) {
+        //   // Expect to log when click 'Run accept' button
+        //   console.log('ValueStored', error, result)
+        // })
 
         // event.watch((error, result) => {
         //   if (!error) alert('wait for a while, check for block Synchronization or block creation')
@@ -59,8 +117,9 @@ class App extends Component {
         //   }
         // )
       })
-      .catch(() => {
-        console.log('Error finding web3.')
+      .catch(e => {
+        console.log(e)
+        // console.log('Error finding web3.')
       })
   }
 
